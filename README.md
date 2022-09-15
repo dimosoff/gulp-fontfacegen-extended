@@ -17,16 +17,16 @@ $ npm install --save-dev gulp-fontfacegen-extended
 
 ```js
 import { src, dest } from "gulp";
-import fontfacegen from "gulp-fontfacegen-extended";
+import fontfaceGen from "gulp-fontfacegen-extended";
 
 export const fonts = () => {
   return src("./src/font/*.{eot,ttf,otf,otc,ttc,woff,woff2,svg}")
         // Transform your fonts: fonter/ttf2woff2/etc
         .pipe(dest("./public/font"))
         .pipe(
-            fontfacegen()
+            fontfaceGen()
                 // or
-            fontfacegen({
+            fontfaceGen({
                 filepath: "./public/css",
                 filename: "fontfacerules.css",
                 destpath: "../fonts",
