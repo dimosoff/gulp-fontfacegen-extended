@@ -1,38 +1,25 @@
-﻿# gulp-fontfacegen
+﻿# gulp-fontfacegen-extended
 
-**gulp-fontfacegen** generates CSS file with @font-face rules for modern browsers (**woff, woff2** formats) based on keywords in font filename.
+**gulp-fontfacegen-extended** is a bit modified [gulp-fontfacegen](https://www.npmjs.com/package/gulp-fontfacegen) plugin. It generates CSS file with @font-face rules for modern browsers (**woff, woff2** formats) based on keywords in font filename.
 \*notice: it doesn't convert font in different formats, use fonter/ttf2woff2/etc to do it;
 
----
+## What is the difference?
+- You can specify fonts destination folder
+- Formatted font names remain unchanged
 
-### Example
-
-- Input font name: `brioso_pro_v26-Italic Semibold`
-- Output file contents:
-
-```
-@font-face {
-	font-family: 'Brioso Pro';
-	font-style: italic;
-	font-weight: 600;
-	font-display: swap;
-	src: local(''),
-	url("../font/brioso_pro_v26-Italic Semibold.woff2") format("woff2"),
-	url("../font/brioso_pro_v26-Italic Semibold.woff") format("woff");
-}
-```
-
-### Installation
-
-`npm install --save-dev gulp-fontfacegen`
-
-### Usage
+## Install
 
 ```
-const { src, dest } = require('gulp');
-const fontfacegen = require('gulp-fontfacegen');
+$ npm install --save-dev gulp-fontfacegen-extended
+```
 
-function font() {
+## Usage
+
+```js
+import { src, dest } from "gulp";
+import fontfacegen from "gulp-fontfacegen-extended";
+
+export const fonts = () => {
   return src("./src/font/*.{eot,ttf,otf,otc,ttc,woff,woff2,svg}")
         // Transform your fonts: fonter/ttf2woff2/etc
         .pipe(dest("./public/font"))
@@ -42,23 +29,77 @@ function font() {
             fontfacegen({
                 filepath: "./public/css",
                 filename: "fontfacerules.css",
+                destpath: "../fonts",
              })
         )
 }
-
-exports.font = font;
 ```
 
-### Options argument
+## API
 
-_Object_ with next properties:
+### fontfaceGen(options?)
 
-- **filepath**: destination folder where @font-face CSS rules should be created, default value: `./src/css/partial`;
-- **filename**: name of file with @font-face CSS rules, default value: `fonts.css`
+
+## options
+
+Type: `object`
+
+### filepath
+
+Type: `string`<br>
+Default: `"./src/css/partial"`
+
+Destination folder where @font-face CSS rules should be created.
+
+### filename
+
+Type: `string`<br>
+Default: `"fonts.css"`
+
+Name of file with @font-face CSS rules.
+
+### destpath
+
+Type: `string`<br>
+Default: `"../fonts"`
+
+Destination folder where fonts are located.
+
+## Example
+
+- Input font names:
+
+```
+../fonts/brioso_pro_v26-Italic Semibold.woff
+../fonts/TTCommons-Medium.woff
+```
+
+- Output file contents:
+
+```
+@font-face {
+	font-family: 'Brioso Pro';
+	font-style: italic;
+	font-weight: 600;
+	src: local(''),
+	url("../fonts/brioso_pro_v26-Italic Semibold.woff2") format("woff2"),
+	url("../fonts/brioso_pro_v26-Italic Semibold.woff") format("woff");
+	font-display: swap;
+}
+@font-face {
+	font-family: 'TTCommons';
+	font-style: normal;
+	font-weight: 500;
+	src: local(''),
+	url("../fonts/TTCommons-Medium.woff2") format("woff2"),
+	url("../fonts/TTCommons-Medium.woff") format("woff");
+	font-display: swap;
+}
+```
 
 ---
 
-### Features
+## Features
 
 - checks if CSS file already exists;
 - creates folder for CSS file;

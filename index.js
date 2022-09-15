@@ -3,7 +3,11 @@ const { Transform } = require("stream");
 const fs = require("fs");
 
 module.exports = (options = {}) => {
-  let { filepath = "./src/css/partial", filename = "fonts.css" } = options;
+  let {
+    filepath = "./src/css/partial",
+    filename = "fonts.css",
+    destpath = "../fonts",
+  } = options;
   let fontFaceFile = `${filepath}/${filename}`;
 
   // check CSS file existance
@@ -73,7 +77,8 @@ module.exports = (options = {}) => {
       } else {
         let array = fileName.split(/-|_|\s/); // splitting fileName by - or _ or \s separators;
 
-        //filter array to exclude keywords and versions (v7, v26, etc) and capitalize first letter of font-family;
+        //filter array to exclude keywords and versions (v7, v26, etc)
+        // and capitalize first letter of font-family if it isn't capitalize;
         let filteredArray = array
           .filter(
             (fileNamePiece) =>
@@ -82,11 +87,15 @@ module.exports = (options = {}) => {
                 /v\d\d*/.test(fileNamePiece.toLowerCase())
               )
           )
-          .map(
-            (fileNamePiece) =>
+          .map((fileNamePiece) => {
+            if (fileNamePiece[0] === fileNamePiece[0].toUpperCase())
+              return fileNamePiece;
+
+            return (
               fileNamePiece.charAt(0).toUpperCase() +
               fileNamePiece.toLowerCase().slice(1)
-          );
+            );
+          });
 
         let fontFamily = filteredArray.join(" "); // get font-family with " " between words;
 
@@ -158,7 +167,7 @@ module.exports = (options = {}) => {
         // create @font-face fonts.css with generated fontFamily, fontStyle, fontWeight, fileName
         fs.appendFile(
           fontFaceFile,
-          `@font-face {\n\tfont-family: '${fontFamily}';\n\tfont-style: ${fontStyle};\n\tfont-weight: ${fontWeight};\n\tfont-display: swap;\n\tsrc: local(''),\n\turl("../font/${fileName}.woff2") format("woff2"),\n\turl("../font/${fileName}.woff") format("woff");\n}\n`,
+          `@font-face {\n\tfont-family: '${fontFamily}';\n\tfont-style: ${fontStyle};\n\tfont-weight: ${fontWeight};\n\tsrc: local(''),\n\turl("${destpath}/${fileName}.woff2") format("woff2"),\n\turl("${destpath}/${fileName}.woff") format("woff");\n\tfont-display: swap;\n}\n`,
           (err) => {
             if (err) {
               console.log(`Error while creating ${fontFaceFile}`);
